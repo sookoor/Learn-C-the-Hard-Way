@@ -18,35 +18,31 @@ int main(int argc, char *argv[])
         letter = 'a' + (letter - 'A');
       }
       
-      switch(letter) {
-      case 'a':
+      if('a' == letter) {
         printf("%d: 'a'\n", i);
-        break;
-        
-      case 'e':
+      } 
+      else if('e' == letter) {
         printf("%d: 'e'\n", i);
-        break;
-        
-      case 'i':
+      } 
+      else if('i' == letter) {
         printf("%d: 'i'\n", i);
-        break;
-        
-      case 'o':
+      } 
+      else if('o' == letter) {
         printf("%d: 'o'\n", i);
-        break;
-        
-      case 'u':
+      } 
+      else if('u' == letter) {
         printf("%d: 'u'\n", i);
-        break;
-        
-      case 'y':
+      } 
+      else if('y' == letter) {
         if(i > 2) {
           // it's only sometimes Y
           printf("%d: 'y'\n", i);
-          break;
         }
-        
-      default:
+        else {
+          printf("%d: %c is not a vowel\n", i, letter);
+        }
+      } 
+      else {
         printf("%d: %c is not a vowel\n", i, letter);
       }
     }
