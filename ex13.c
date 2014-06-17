@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 
   int j;
   for(j = 1; j < argc; j++) {
-    int i;
+    int i = 0;
     char letter;
     for(i = 0, letter = argv[j][i]; argv[j][i] != '\0'; i++, letter = argv[j][i]) {
       

@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
     printf("Here's your arguments:\n");
 
     for(i = 1; i < argc; i++) {
-      printf("%s ", argv[i]);
+      printf("%s ", *(argv+i));
     }
     printf("\n");
   } else {

@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
 
   int i = argc - 1;
   while(i >= 0) {
-    printf("arg %d: %s\n", i, argv[i]);
+    printf("arg %d: %s\n", i, *(argv+i));
     i--;
   }
 
@@ -19,14 +19,14 @@ int main(int argc, char *argv[])
   int num_states = 4;
 
   i = 0;
-  while(i < argc && i < num_states) {
-    states[i] = argv[i];
+  while(i < argc - 1 && i < num_states) {
+    *(states+i) = *(argv+i+1);
     i++;
   }
 
   i = num_states - 1;  // watch for this
   while(i >= 0) {
-    printf("state %d: %s\n", i, states[i]);
+    printf("state %d: %s\n", i, *(states+i));
     i--;
   }
 
