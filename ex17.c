@@ -29,7 +29,6 @@ typedef struct {
 
 void die_no_conn(const char *message)
 {
-
   // When a function returns an error, it sents an "external" variable
   // called errno to a number to say exactly what error happend. Print
   // the error message using perror
@@ -249,6 +248,41 @@ void Database_list(Connection *conn)
   }
 }
 
+void Database_find(Connection *conn, char *field, char *key)
+{
+  int i = 0;
+  Database *db = conn->db;
+
+  for(i = 0; i < conn->db->max_rows; i++) {
+    Address *cur = db->rows[i];
+    
+    if(cur->set) {
+      if(strcmp(field, "id") == 0) { 
+        if(cur->id == atoi(key)) {
+          Address_print(cur);
+          return;
+        }
+      }
+      else if(strcmp(field, "name") == 0) {  
+        if(strcmp(cur->name, key) == 0) {
+          Address_print(cur);
+          return;
+        }
+      }
+      else if(strcmp(field, "email") == 0) { 
+        if(strcmp(cur->email, key) == 0) {
+          Address_print(cur);
+          return;
+        }
+      }
+      else {
+        die("Invalid field, only: id, name, email", conn);
+      }
+    }
+  }
+  printf("%s %s not in database\n", field, key);
+}
+
 int main(int argc, char *argv[])
 {
   if(argc < 3) die_no_conn("USAGE: ex17 <dbfile> <action> [action params]");
@@ -307,8 +341,14 @@ int main(int argc, char *argv[])
   case 'l':
     Database_list(conn);
     break;
+
+  case 'f':
+    if(argc != 5) die("Need field and key to find", conn);
+
+    Database_find(conn, argv[3], argv[4]);
+    break;
   default:
-    die("Invalid action, only: c=create, g=get, s=set, d=del, l=list", conn);
+    die("Invalid action, only: c=create, g=get, s=set, d=del, l=list, f=find", conn);
   }
 
   Database_close(conn);
