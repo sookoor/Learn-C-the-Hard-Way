@@ -4,8 +4,8 @@
 #include <errno.h>
 #include <string.h>
 
-//#define MAX_DATA 512
-//#define MAX_ROWS 100
+#define MAX_DATA 512
+#define MAX_ROWS 100
 
 struct Address {
   int id;
@@ -174,6 +174,7 @@ void Database_create(struct Connection *conn, int maxData, int maxRows)
   int i = 0;
   conn->db->max_data = maxData;
   conn->db->max_rows = maxRows;
+
   conn->db->rows = (struct Address**)malloc(sizeof(struct Address*) * maxRows);
 
   for(i = 0; i < maxRows; i++) {
@@ -201,7 +202,6 @@ void Database_set(struct Connection *conn, int id, const char *name, const char 
   int maxData = conn->db->max_data;
   if(addr->set == 1) die("Alread set, delete it first", conn);
 
-  printf("Database_set::Set: %d\n", conn->db->rows[id]->set);
   addr->set = 1;
   addr->name = malloc(sizeof(char) * maxData);
   addr->email = malloc(sizeof(char) * maxData);
@@ -219,7 +219,6 @@ void Database_set(struct Connection *conn, int id, const char *name, const char 
 
   res = strncpy(addr->email, email, maxData);
   if(!res) die("Email copy failed", conn);
-  printf("Database_set::Set: %d\n", conn->db->rows[id]->set);
 }
 
 void Database_get(struct Connection *conn, int id)
@@ -259,34 +258,51 @@ int main(int argc, char *argv[])
   char *filename = argv[1];
   char action = argv[2][0];
   struct Connection *conn = Database_open(filename, action);
-    
-  //  if(argc > 3) id = atoi(argv[3]);
-  // if(id >= maxRows) die("There's not that many records.", conn);
+  int id = 0;
+
+  int max_data = MAX_DATA;
+  int max_rows = MAX_ROWS;
 
   switch(action) {
   case 'c':
-    if(argc < 5) die("Required: max_data, max_rows", conn);
-    Database_create(conn, atoi(argv[3]), atoi(argv[4]));
+    switch(argc) {
+    case 5:
+      max_rows = atoi(argv[4]);
+      //fallthrough
+    case 4:
+      max_data = atoi(argv[3]);
+      break;
+    }
+    Database_create(conn, max_data, max_rows);
     Database_write(conn);
     break;
 
   case 'g':
     if(argc != 4) die("Need an id to get", conn);
     
-    Database_get(conn, atoi(argv[3]));
+    id = atoi(argv[3]); 
+    if(id >= conn->db->max_rows) die("There's not that many records.", conn);
+    
+    Database_get(conn, id);
     break;
 
   case 's':
     if(argc != 6) die("Need id, name, email to set", conn);
-    Database_set(conn, atoi(argv[3]), argv[4], argv[5]);
-    printf("Set: %d\n", conn->db->rows[atoi(argv[3])]->set);
+
+    id = atoi(argv[3]); 
+    if(id >= conn->db->max_rows) die("There's not that many records.", conn);
+
+    Database_set(conn, id, argv[4], argv[5]);
     Database_write(conn);
     break;
 
   case 'd':
     if(argc != 4) die("Need id to delete", conn);
+
+    id = atoi(argv[3]); 
+    if(id >= conn->db->max_rows) die("There's not that many records.", conn);
     
-    Database_delete(conn, atoi(argv[3]));
+    Database_delete(conn, id);
     Database_write(conn);
     break;
 
