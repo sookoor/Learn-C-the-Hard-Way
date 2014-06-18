@@ -5,6 +5,7 @@
 *.ko
 *.obj
 *.elf
+*.dat
 
 # Libraries
 *.lib
