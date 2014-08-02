@@ -9,4 +9,4 @@ make ex17
 ./ex17 db.dat l
 ./ex17 db.dat f id 1
 ./ex17 db.dat f id 3
-valgrind ./ex17 db.dat g 2
+valgrind -v ./ex17 db.dat g 2
